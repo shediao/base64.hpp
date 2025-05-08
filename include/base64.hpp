@@ -653,13 +653,13 @@ static inline bool decode(std::string const& input, std::string* output) {
         // done in-place, but it violates the API contract that `output` is only
         // modified on success.
         std::string input_without_whitespace;
-        for (auto c : input) {
-            if (std::none_of(std::begin(kInfraAsciiWhitespace),
-                             std::end(kInfraAsciiWhitespace),
-                             [c](char c1) { return c == c1; })) {
-                input_without_whitespace.push_back(c);
-            }
-        }
+        std::remove_copy_if(
+            begin(input), end(input),
+            std::back_inserter(input_without_whitespace), [](char c) {
+                return std::any_of(std::begin(kInfraAsciiWhitespace),
+                                   std::end(kInfraAsciiWhitespace),
+                                   [c](char c1) { return c == c1; });
+            });
         output_size =
             modp_b64_decode(&(temp[0]), input_without_whitespace.data(),
                             input_without_whitespace.size(), policy);
