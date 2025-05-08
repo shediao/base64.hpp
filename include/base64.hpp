@@ -1,5 +1,6 @@
 #ifndef __BASE64_HPP__
 #define __BASE64_HPP__
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <optional>
@@ -652,9 +653,9 @@ static inline bool decode(std::string const& input, std::string* output) {
         // modified on success.
         std::string input_without_whitespace;
         for (auto c : input) {
-            if (std::find(std::begin(kInfraAsciiWhitespace),
-                          std::end(kInfraAsciiWhitespace),
-                          c) == std::end(kInfraAsciiWhitespace)) {
+            if (std::none_of(std::begin(kInfraAsciiWhitespace),
+                             std::end(kInfraAsciiWhitespace),
+                             [c](char c1) { return c == c1; })) {
                 input_without_whitespace.push_back(c);
             }
         }
