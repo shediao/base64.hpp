@@ -605,7 +605,8 @@ inline static size_t modp_b64_decode(char* dest, const char* src, size_t len,
 static inline std::string encode(std::string_view input) {
     std::string output;
     output.resize(modp_b64_encode_data_len(input.size()));
-    auto len = modp_b64_encode_data(output.data(), input.data(), input.size());
+    [[maybe_unused]] auto len =
+        modp_b64_encode_data(output.data(), input.data(), input.size());
     assert(len == output.size());
     return output;
 }
