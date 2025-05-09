@@ -16,11 +16,14 @@ constexpr static char CHAR63 = '/';
 constexpr static char CHARPAD = '=';
 constexpr static size_t MODP_B64_ERROR = -1;
 
-constexpr static char kInfraAsciiWhitespace[] = {0x09, 0x0A, 0x0C,
-                                                 0x0D, 0x20, 0};
 constexpr auto encode_data_len(size_t A) { return (A + 2) / 3 * 4; }
 constexpr auto encode_len(size_t A) { return encode_data_len(A) + 1; }
 constexpr auto decode_len(size_t A) { return (A / 4 * 3 + 2); }
+
+constexpr bool is_infra_ascii_whitespace(char c) {
+    return c == 0x09 || c == 0x0A || c == 0x0C || c == 0x0D || c == 0x20 ||
+           c == 0;
+}
 
 static const char e0[256] = {
     'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'C', 'C', 'C', 'C', 'D', 'D', 'D',
@@ -651,13 +654,9 @@ static inline bool decode(std::string const& input, std::string* output) {
         // done in-place, but it violates the API contract that `output` is only
         // modified on success.
         std::string input_without_whitespace;
-        std::remove_copy_if(
-            begin(input), end(input),
-            std::back_inserter(input_without_whitespace), [](char c) {
-                return std::any_of(std::begin(kInfraAsciiWhitespace),
-                                   std::end(kInfraAsciiWhitespace),
-                                   [c](char c1) { return c == c1; });
-            });
+        std::remove_copy_if(begin(input), end(input),
+                            std::back_inserter(input_without_whitespace),
+                            is_infra_ascii_whitespace);
         output_size =
             modp_b64_decode(&(temp[0]), input_without_whitespace.data(),
                             input_without_whitespace.size(), policy);
