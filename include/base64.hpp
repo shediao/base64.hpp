@@ -8,11 +8,6 @@
 #include <string_view>
 #include <vector>
 
-#define MODP_B64_MAX_INPUT_LEN ((SIZE_MAX - 1) / 4 * 3)
-#define modp_b64_encode_data_len(A) ((A + 2) / 3 * 4)
-#define modp_b64_encode_len(A) (modp_b64_encode_data_len(A) + 1)
-#define modp_b64_decode_len(A) (A / 4 * 3 + 2)
-
 namespace base64 {
 namespace {
 
@@ -23,6 +18,9 @@ constexpr static size_t MODP_B64_ERROR = -1;
 
 constexpr static char kInfraAsciiWhitespace[] = {0x09, 0x0A, 0x0C,
                                                  0x0D, 0x20, 0};
+constexpr auto encode_data_len(size_t A) { return (A + 2) / 3 * 4; }
+constexpr auto encode_len(size_t A) { return encode_data_len(A) + 1; }
+constexpr auto decode_len(size_t A) { return (A / 4 * 3 + 2); }
 
 static const char e0[256] = {
     'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'C', 'C', 'C', 'C', 'D', 'D', 'D',
@@ -604,7 +602,7 @@ inline static size_t modp_b64_decode(char* dest, const char* src, size_t len,
 
 static inline std::string encode(std::string_view input) {
     std::string output;
-    output.resize(modp_b64_encode_data_len(input.size()));
+    output.resize(encode_data_len(input.size()));
     [[maybe_unused]] auto len =
         modp_b64_encode_data(output.data(), input.data(), input.size());
     assert(len == output.size());
@@ -617,7 +615,7 @@ static inline void encode(const std::string& input, std::string* output) {
 
 static inline std::optional<std::vector<uint8_t>> decode(
     std::string const& input) {
-    std::vector<uint8_t> ret(modp_b64_decode_len(input.size()));
+    std::vector<uint8_t> ret(decode_len(input.size()));
 
     size_t input_size = input.size();
     size_t output_size =
@@ -634,7 +632,7 @@ static inline std::optional<std::vector<uint8_t>> decode(
 static inline bool decode(std::string const& input, std::string* output) {
     ModpDecodePolicy policy{ModpDecodePolicy::kStrict};
     std::string temp;
-    temp.resize(modp_b64_decode_len(input.size()));
+    temp.resize(decode_len(input.size()));
 
     // does not null terminate result since result is binary data!
     size_t input_size = input.size();
