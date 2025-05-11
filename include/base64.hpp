@@ -11,9 +11,7 @@
 namespace base64 {
 namespace {
 
-constexpr static char CHAR62 = '+';
-constexpr static char CHAR63 = '/';
-constexpr static char CHARPAD = '=';
+constexpr static char BASE64_CHARPAD = '=';
 constexpr static size_t MODP_B64_ERROR = -1;
 
 constexpr auto encode_data_len(size_t A) { return (A + 2) / 3 * 4; }
@@ -497,8 +495,8 @@ inline static size_t modp_b64_encode_data(char* dest, const char* str,
             t1 = str[i];
             *p++ = e0[t1];
             *p++ = e1[(t1 & 0x03) << 4];
-            *p++ = CHARPAD;
-            *p++ = CHARPAD;
+            *p++ = BASE64_CHARPAD;
+            *p++ = BASE64_CHARPAD;
             break;
         default: /* case 2 */
             t1 = str[i];
@@ -506,7 +504,7 @@ inline static size_t modp_b64_encode_data(char* dest, const char* str,
             *p++ = e0[t1];
             *p++ = e1[((t1 & 0x03) << 4) | ((t2 >> 4) & 0x0F)];
             *p++ = e2[(t2 & 0x0F) << 2];
-            *p++ = CHARPAD;
+            *p++ = BASE64_CHARPAD;
     }
 
     return p - (uint8_t*)dest;
@@ -521,7 +519,7 @@ inline static size_t modp_b64_encode(char* dest, const char* str, size_t len) {
 inline static size_t do_decode_padding(const char* src, size_t len,
                                        ModpDecodePolicy policy) {
     if (policy == ModpDecodePolicy::kNoPaddingValidation) {
-        while (len > 0 && src[len - 1] == CHARPAD) {
+        while (len > 0 && src[len - 1] == BASE64_CHARPAD) {
             len--;
         }
     } else {
@@ -531,9 +529,9 @@ inline static size_t do_decode_padding(const char* src, size_t len,
             return MODP_B64_ERROR;
         }
         if (remainder == 0) {
-            if (src[len - 1] == CHARPAD) {
+            if (src[len - 1] == BASE64_CHARPAD) {
                 len--;
-                if (src[len - 1] == CHARPAD) {
+                if (src[len - 1] == BASE64_CHARPAD) {
                     len--;
                 }
             }
