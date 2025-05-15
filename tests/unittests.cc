@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "base64.hpp"
+#include "base64/base64.hpp"
 
 TEST(Base64Test, Basic) {
     const std::string kText = "hello world";
