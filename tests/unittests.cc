@@ -40,7 +40,7 @@ TEST(Base64Test, Binary) {
     auto decode = base64::decode(binary_encoded);
     EXPECT_TRUE(decode.has_value());
     EXPECT_EQ(decode.value().size(), std::size(kData));
-    for (int i = 0; i < std::size(kData); i++) {
+    for (size_t i = 0; i < std::size(kData); i++) {
         EXPECT_EQ(kData[i], decode.value()[i]);
     }
     EXPECT_FALSE(base64::decode("invalid base64!"));
