@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace base64 {
-namespace {
+namespace detail {
 
 constexpr static char BASE64_CHARPAD = '=';
 constexpr static size_t MODP_B64_ERROR = -1;
@@ -599,13 +599,13 @@ inline static size_t modp_b64_decode(char* dest, const char* src, size_t len,
 
     return 3 * chunks + (6 * leftover) / 8;
 }
-}  // namespace
+}  // namespace detail
 
 static inline std::string encode(std::string_view input) {
     std::string output;
-    output.resize(encode_data_len(input.size()));
+    output.resize(detail::encode_data_len(input.size()));
     [[maybe_unused]] auto len =
-        modp_b64_encode_data(output.data(), input.data(), input.size());
+        detail::modp_b64_encode_data(output.data(), input.data(), input.size());
     assert(len == output.size());
     return output;
 }
@@ -616,13 +616,13 @@ static inline void encode(const std::string& input, std::string* output) {
 
 static inline std::optional<std::vector<uint8_t>> decode(
     std::string const& input) {
-    std::vector<uint8_t> ret(decode_len(input.size()));
+    std::vector<uint8_t> ret(detail::decode_len(input.size()));
 
     size_t input_size = input.size();
     size_t output_size =
         modp_b64_decode(reinterpret_cast<char*>(ret.data()), input.data(),
-                        input_size, ModpDecodePolicy::kStrict);
-    if (output_size == MODP_B64_ERROR) {
+                        input_size, detail::ModpDecodePolicy::kStrict);
+    if (output_size == detail::MODP_B64_ERROR) {
         return std::nullopt;
     }
 
@@ -631,9 +631,9 @@ static inline std::optional<std::vector<uint8_t>> decode(
 }
 
 static inline bool decode(std::string const& input, std::string* output) {
-    ModpDecodePolicy policy{ModpDecodePolicy::kStrict};
+    detail::ModpDecodePolicy policy{detail::ModpDecodePolicy::kStrict};
     std::string temp;
-    temp.resize(decode_len(input.size()));
+    temp.resize(detail::decode_len(input.size()));
 
     // does not null terminate result since result is binary data!
     size_t input_size = input.size();
@@ -646,21 +646,21 @@ static inline bool decode(std::string const& input, std::string* output) {
     // input will always cause `modp_b64_decode` to fail, just handle whitespace
     // stripping on failure. This is not much slower than just scanning for
     // whitespace first, even for input with whitespace.
-    if (output_size == MODP_B64_ERROR &&
-        policy == ModpDecodePolicy::kForgiving) {
+    if (output_size == detail::MODP_B64_ERROR &&
+        policy == detail::ModpDecodePolicy::kForgiving) {
         // We could use `output` here to avoid an allocation when decoding is
         // done in-place, but it violates the API contract that `output` is only
         // modified on success.
         std::string input_without_whitespace;
         std::remove_copy_if(begin(input), end(input),
                             std::back_inserter(input_without_whitespace),
-                            is_infra_ascii_whitespace);
+                            detail::is_infra_ascii_whitespace);
         output_size =
             modp_b64_decode(&(temp[0]), input_without_whitespace.data(),
                             input_without_whitespace.size(), policy);
     }
 
-    if (output_size == MODP_B64_ERROR) {
+    if (output_size == detail::MODP_B64_ERROR) {
         return false;
     }
 
