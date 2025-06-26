@@ -1,9 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <optional>
-#include <span>
 #include <string>
-#include <vector>
 
 #include "base64/base64.hpp"
 
