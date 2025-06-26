@@ -468,8 +468,7 @@ enum class ModpDecodePolicy {
 
 constexpr static unsigned int BADCHAR = 0x01FFFFFF;
 
-constexpr inline size_t modp_b64_encode_data(char* dest, const char* str,
-                                             size_t len) {
+inline size_t modp_b64_encode_data(char* dest, const char* str, size_t len) {
     size_t i = 0;
     uint8_t* p = (uint8_t*)dest;
 
@@ -510,15 +509,14 @@ constexpr inline size_t modp_b64_encode_data(char* dest, const char* str,
     return p - (uint8_t*)dest;
 }
 
-constexpr inline size_t modp_b64_encode(char* dest, const char* str,
-                                        size_t len) {
+inline size_t modp_b64_encode(char* dest, const char* str, size_t len) {
     size_t output_size = modp_b64_encode_data(dest, str, len);
     dest[output_size] = '\0';
     return output_size;
 }
 
-constexpr inline size_t do_decode_padding(const char* src, size_t len,
-                                          ModpDecodePolicy policy) {
+inline size_t do_decode_padding(const char* src, size_t len,
+                                ModpDecodePolicy policy) {
     if (policy == ModpDecodePolicy::kNoPaddingValidation) {
         while (len > 0 && src[len - 1] == BASE64_CHARPAD) {
             len--;
@@ -541,8 +539,8 @@ constexpr inline size_t do_decode_padding(const char* src, size_t len,
     return len % 4 == 1 ? MODP_B64_ERROR : len;
 }
 
-constexpr inline size_t modp_b64_decode(char* dest, const char* src, size_t len,
-                                        ModpDecodePolicy policy) {
+inline size_t modp_b64_decode(char* dest, const char* src, size_t len,
+                              ModpDecodePolicy policy) {
     if (len != 0) {
         len = do_decode_padding(src, len, policy);
     }
