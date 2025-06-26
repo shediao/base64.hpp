@@ -23,7 +23,7 @@ constexpr bool is_infra_ascii_whitespace(char c) {
            c == 0;
 }
 
-static const char e0[256] = {
+constexpr static const char e0[256] = {
     'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'C', 'C', 'C', 'C', 'D', 'D', 'D',
     'D', 'E', 'E', 'E', 'E', 'F', 'F', 'F', 'F', 'G', 'G', 'G', 'G', 'H', 'H',
     'H', 'H', 'I', 'I', 'I', 'I', 'J', 'J', 'J', 'J', 'K', 'K', 'K', 'K', 'L',
@@ -43,7 +43,7 @@ static const char e0[256] = {
     '8', '8', '8', '8', '9', '9', '9', '9', '+', '+', '+', '+', '/', '/', '/',
     '/'};
 
-static const char e1[256] = {
+constexpr static const char e1[256] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
     'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -63,7 +63,7 @@ static const char e1[256] = {
     'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+',
     '/'};
 
-static const char e2[256] = {
+constexpr static const char e2[256] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
     'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -87,7 +87,7 @@ static const char e2[256] = {
 
 /* SPECIAL DECODE TABLES FOR BIG ENDIAN (IBM/MOTOROLA/SUN) CPUS */
 
-static const uint32_t d0[256] = {
+constexpr static const uint32_t d0[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -132,7 +132,7 @@ static const uint32_t d0[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
 
-static const uint32_t d1[256] = {
+constexpr static const uint32_t d1[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -177,7 +177,7 @@ static const uint32_t d1[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
 
-static const uint32_t d2[256] = {
+constexpr static const uint32_t d2[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -222,7 +222,7 @@ static const uint32_t d2[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
 
-static const uint32_t d3[256] = {
+constexpr static const uint32_t d3[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -271,7 +271,7 @@ static const uint32_t d3[256] = {
 
 /* SPECIAL DECODE TABLES FOR LITTLE ENDIAN (INTEL) CPUS */
 
-static const uint32_t d0[256] = {
+constexpr static const uint32_t d0[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -316,7 +316,7 @@ static const uint32_t d0[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
 
-static const uint32_t d1[256] = {
+constexpr static const uint32_t d1[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -361,7 +361,7 @@ static const uint32_t d1[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
 
-static const uint32_t d2[256] = {
+constexpr static const uint32_t d2[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -406,7 +406,7 @@ static const uint32_t d2[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
 
-static const uint32_t d3[256] = {
+constexpr static const uint32_t d3[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -468,13 +468,13 @@ enum class ModpDecodePolicy {
 
 constexpr static unsigned int BADCHAR = 0x01FFFFFF;
 
-inline static size_t modp_b64_encode_data(char* dest, const char* str,
-                                          size_t len) {
+constexpr inline size_t modp_b64_encode_data(char* dest, const char* str,
+                                             size_t len) {
     size_t i = 0;
     uint8_t* p = (uint8_t*)dest;
 
     /* unsigned here is important! */
-    uint8_t t1, t2, t3;
+    uint8_t t1{0}, t2{0}, t3{0};
 
     if (len > 2) {
         for (; i < len - 2; i += 3) {
@@ -510,14 +510,15 @@ inline static size_t modp_b64_encode_data(char* dest, const char* str,
     return p - (uint8_t*)dest;
 }
 
-inline static size_t modp_b64_encode(char* dest, const char* str, size_t len) {
+constexpr inline size_t modp_b64_encode(char* dest, const char* str,
+                                        size_t len) {
     size_t output_size = modp_b64_encode_data(dest, str, len);
     dest[output_size] = '\0';
     return output_size;
 }
 
-inline static size_t do_decode_padding(const char* src, size_t len,
-                                       ModpDecodePolicy policy) {
+constexpr inline size_t do_decode_padding(const char* src, size_t len,
+                                          ModpDecodePolicy policy) {
     if (policy == ModpDecodePolicy::kNoPaddingValidation) {
         while (len > 0 && src[len - 1] == BASE64_CHARPAD) {
             len--;
@@ -540,8 +541,8 @@ inline static size_t do_decode_padding(const char* src, size_t len,
     return len % 4 == 1 ? MODP_B64_ERROR : len;
 }
 
-inline static size_t modp_b64_decode(char* dest, const char* src, size_t len,
-                                     ModpDecodePolicy policy) {
+constexpr inline size_t modp_b64_decode(char* dest, const char* src, size_t len,
+                                        ModpDecodePolicy policy) {
     if (len != 0) {
         len = do_decode_padding(src, len, policy);
     }
@@ -550,7 +551,7 @@ inline static size_t modp_b64_decode(char* dest, const char* src, size_t len,
         return len;
     }
 
-    size_t i;
+    size_t i{0};
     int leftover = len % 4;
     size_t chunks = (leftover == 0) ? len / 4 - 1 : len / 4;
 
@@ -601,7 +602,7 @@ inline static size_t modp_b64_decode(char* dest, const char* src, size_t len,
 }
 }  // namespace detail
 
-static inline std::string encode(std::string_view input) {
+inline std::string encode(std::string_view input) {
     std::string output;
     output.resize(detail::encode_data_len(input.size()));
     [[maybe_unused]] auto len =
@@ -610,12 +611,11 @@ static inline std::string encode(std::string_view input) {
     return output;
 }
 
-static inline void encode(const std::string& input, std::string* output) {
+inline void encode(const std::string& input, std::string* output) {
     *output = encode(std::string_view(input.data(), input.size()));
 }
 
-static inline std::optional<std::vector<uint8_t>> decode(
-    std::string const& input) {
+inline std::optional<std::vector<uint8_t>> decode(std::string const& input) {
     std::vector<uint8_t> ret(detail::decode_len(input.size()));
 
     size_t input_size = input.size();
@@ -630,7 +630,7 @@ static inline std::optional<std::vector<uint8_t>> decode(
     return ret;
 }
 
-static inline bool decode(std::string const& input, std::string* output) {
+inline bool decode(std::string const& input, std::string* output) {
     detail::ModpDecodePolicy policy{detail::ModpDecodePolicy::kStrict};
     std::string temp;
     temp.resize(detail::decode_len(input.size()));

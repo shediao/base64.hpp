@@ -19,7 +19,6 @@ target_include_directories(
   base64 INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                    $<INSTALL_INTERFACE:include>)
 
-target_compile_features(base64 INTERFACE cxx_std_20)
 add_library(base64::base64 ALIAS base64)
 
 if(BASE64_BUILD_TESTS)
