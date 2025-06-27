@@ -2,6 +2,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(BASE64_ENABLE_ASAN "build asan for unittests" ON)
 
+if(NOT CMAKE_HOST_SYSTEM_NAME MATCHES "Windows" AND MSVC)
+  set(gtest_disable_pthreads ON)
+endif()
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -9,6 +13,18 @@ FetchContent_Declare(
   GIT_TAG v1.15.2
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(googletest)
+
+FetchContent_Declare(
+  subprocess
+  GIT_REPOSITORY https://github.com/shediao/subprocess.hpp
+  GIT_TAG v0.0.5)
+FetchContent_MakeAvailable(subprocess)
+
+FetchContent_Declare(
+  environment
+  GIT_REPOSITORY https://github.com/shediao/environment.hpp
+  GIT_TAG v0.0.4)
+FetchContent_MakeAvailable(environment)
 
 # --- Compiler and Platform Specific Configuration ---
 
@@ -89,8 +105,9 @@ function(add_test_suite test_name)
     endif()
 
     # Link libraries
-    target_link_libraries(${target_name} PRIVATE base64::base64 GTest::gtest
-                                                 GTest::gtest_main)
+    target_link_libraries(
+      ${target_name} PRIVATE base64::base64 GTest::gtest GTest::gtest_main
+                             subprocess::subprocess environment::environment)
 
     # Add to CTest
     add_test(NAME ${test_name}${test_name_suffix} COMMAND ${target_name})

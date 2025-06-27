@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <environment/environment.hpp>
 #include <string>
+#include <subprocess/subprocess.hpp>
 
 #include "base64/base64.hpp"
 
@@ -14,7 +16,7 @@ TEST(Base64Test, Basic) {
     std::string encoded = base64::encode(kText);
     EXPECT_EQ(kBase64Text, encoded);
 
-    ok = base64::decode(encoded, &decoded);
+    ok = base64::decode(encoded, decoded);
     EXPECT_TRUE(ok);
     EXPECT_EQ(kText, decoded);
 }
@@ -50,7 +52,32 @@ TEST(Base64Test, InPlace) {
     std::string text = base64::encode(kText);
     EXPECT_EQ(kBase64Text, text);
 
-    bool ok = base64::decode(text, &text);
+    bool ok = base64::decode(text, text);
     EXPECT_TRUE(ok);
     EXPECT_EQ(text, kText);
 }
+
+#if !defined(_WIN32)
+void test_base64_command(const std::string& s) {
+    subprocess::buffer stdout_buf;
+    subprocess::buffer stdin_buf{{s.begin(), s.end()}};
+    ASSERT_EQ(
+        0, subprocess::run("base64", $stdout > stdout_buf, $stdin < stdin_buf));
+    auto base64 = base64::encode({stdin_buf.data(), stdin_buf.size()});
+    ASSERT_TRUE(std::equal(base64.begin(), base64.begin(), stdout_buf.data()));
+}
+TEST(Base64Test, TestEnv) {
+    auto envs = env::all();
+    for (auto const& [key, value] : envs) {
+        test_base64_command(key + "=" + value);
+    }
+
+    subprocess::buffer buf;
+    ASSERT_EQ(0, subprocess::run("uname", "-a", $stdout > buf));
+    test_base64_command({buf.data(), buf.size()});
+    buf.clear();
+    ASSERT_EQ(0, subprocess::run("printenv", $stdout > buf));
+    test_base64_command({buf.data(), buf.size()});
+    buf.clear();
+}
+#endif
