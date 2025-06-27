@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(subprocess)
 FetchContent_Declare(
   environment
   GIT_REPOSITORY https://github.com/shediao/environment.hpp
-  GIT_TAG v0.0.4)
+  GIT_TAG e0c79afb6944aee02f5acf7037ed6393be80ff4a)
 FetchContent_MakeAvailable(environment)
 
 # --- Compiler and Platform Specific Configuration ---
