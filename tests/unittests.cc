@@ -65,6 +65,11 @@ void test_base64_command(const std::string& s) {
         0, subprocess::run("base64", $stdout > stdout_buf, $stdin < stdin_buf));
     auto base64 = base64::encode({stdin_buf.data(), stdin_buf.size()});
     ASSERT_TRUE(std::equal(base64.begin(), base64.begin(), stdout_buf.data()));
+
+    std::string debase64;
+    auto ret = base64::decode(base64, debase64);
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(s, debase64);
 }
 TEST(Base64Test, TestEnv) {
     auto envs = env::all();
