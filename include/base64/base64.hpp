@@ -1,6 +1,5 @@
 #ifndef __BASE64_BASE64_HPP__
 #define __BASE64_BASE64_HPP__
-#include <algorithm>
 #include <cassert>  // assert()
 #include <cstdint>  // SIZE_MAX
 #include <optional>
@@ -14,12 +13,7 @@ namespace detail {
 inline constexpr char BASE64_CHARPAD = '=';
 inline constexpr size_t MODP_B64_ERROR = SIZE_MAX;
 
-constexpr inline auto encode_data_len(size_t A) noexcept {
-    return (A + 2) / 3 * 4;
-}
-constexpr inline auto encode_len(size_t A) noexcept {
-    return encode_data_len(A) + 1;
-}
+constexpr inline auto encode_len(size_t A) noexcept { return (A + 2) / 3 * 4; }
 constexpr inline auto decode_len(size_t A) noexcept { return (A / 4 * 3 + 2); }
 
 constexpr inline bool is_infra_ascii_whitespace(char c) noexcept {
@@ -98,9 +92,6 @@ inline constexpr const char e2[256] = {
     '/'};
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-
-/* SPECIAL DECODE TABLES FOR BIG ENDIAN (IBM/MOTOROLA/SUN) CPUS */
-
 inline constexpr const uint32_t d0[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -280,11 +271,7 @@ inline constexpr const uint32_t d3[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff};
-
 #else
-
-/* SPECIAL DECODE TABLES FOR LITTLE ENDIAN (INTEL) CPUS */
-
 inline constexpr const uint32_t d0[256] = {
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
     0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -467,23 +454,10 @@ inline constexpr const uint32_t d3[256] = {
 
 #endif
 
-enum class ModpDecodePolicy {
-    // src length must be divisible by 4, with a max of 2 pad chars.
-    kStrict,
-
-    // Matches the infra spec: https://infra.spec.whatwg.org/#forgiving-base64
-    // _except_ for ignoring whitespace (Step 1).
-    kForgiving,
-
-    // src length % 4 must not equal 1, after stripping all pad chars.
-    // Accepts any number of pad chars.
-    kNoPaddingValidation,
-};
-
 inline constexpr unsigned int BADCHAR = 0x01FFFFFF;
 
-inline size_t modp_b64_encode_data(char* dest, const char* str,
-                                   size_t len) noexcept {
+inline size_t base64_encode_data(char* dest, const char* str,
+                                 size_t len) noexcept {
     size_t i = 0;
     char* p = dest;
 
@@ -524,41 +498,26 @@ inline size_t modp_b64_encode_data(char* dest, const char* str,
     return p - dest;
 }
 
-inline size_t modp_b64_encode(char* dest, const char* str,
-                              size_t len) noexcept {
-    size_t output_size = modp_b64_encode_data(dest, str, len);
-    dest[output_size] = '\0';
-    return output_size;
-}
-
-inline size_t do_decode_padding(const char* src, size_t len,
-                                ModpDecodePolicy policy) noexcept {
-    if (policy == ModpDecodePolicy::kNoPaddingValidation) {
-        while (len > 0 && src[len - 1] == BASE64_CHARPAD) {
+inline size_t do_decode_padding(const char* src, size_t len) noexcept {
+    const size_t remainder = len % 4;
+    if (remainder != 0 || len < 4) {
+        return MODP_B64_ERROR;
+    }
+    if (remainder == 0) {
+        if (src[len - 1] == BASE64_CHARPAD) {
             len--;
-        }
-    } else {
-        const size_t remainder = len % 4;
-        if (policy == ModpDecodePolicy::kStrict &&
-            (remainder != 0 || len < 4)) {
-            return MODP_B64_ERROR;
-        }
-        if (remainder == 0) {
             if (src[len - 1] == BASE64_CHARPAD) {
                 len--;
-                if (src[len - 1] == BASE64_CHARPAD) {
-                    len--;
-                }
             }
         }
     }
     return len % 4 == 1 ? MODP_B64_ERROR : len;
 }
 
-inline size_t modp_b64_decode(unsigned char* dest, const char* src, size_t len,
-                              ModpDecodePolicy policy) noexcept {
+inline size_t base64_decode(unsigned char* dest, const char* src,
+                            size_t len) noexcept {
     if (len != 0) {
-        len = do_decode_padding(src, len, policy);
+        len = do_decode_padding(src, len);
     }
 
     if (len == 0 || len == MODP_B64_ERROR) {
@@ -618,15 +577,15 @@ inline size_t modp_b64_decode(unsigned char* dest, const char* src, size_t len,
 
 inline std::string encode(std::string_view input) {
     std::string output;
-    output.resize(detail::encode_data_len(input.size()));
+    output.resize(detail::encode_len(input.size()));
     [[maybe_unused]] auto len =
-        detail::modp_b64_encode_data(output.data(), input.data(), input.size());
+        detail::base64_encode_data(output.data(), input.data(), input.size());
     assert(len == output.size());
     return output;
 }
 
-inline void encode(const std::string& input, std::string* output) {
-    *output = encode(std::string_view(input.data(), input.size()));
+inline void encode(const std::string& input, std::string& output) {
+    output = encode(std::string_view(input.data(), input.size()));
 }
 
 inline std::optional<std::vector<unsigned char>> decode(
@@ -634,10 +593,26 @@ inline std::optional<std::vector<unsigned char>> decode(
     std::vector<unsigned char> ret(detail::decode_len(input.size()));
 
     size_t input_size = input.size();
-    size_t output_size = modp_b64_decode(ret.data(), input.data(), input_size,
-                                         detail::ModpDecodePolicy::kStrict);
+    size_t output_size =
+        detail::base64_decode(ret.data(), input.data(), input_size);
     if (output_size == detail::MODP_B64_ERROR) {
-        return std::nullopt;
+        auto it = std::find_if(
+            input.begin(),
+            input.size() > 76 ? std::next(input.begin(), 76) : input.end(),
+            detail::is_infra_ascii_whitespace);
+        if (it != input.begin()) {
+            std::string input_without_whitespace;
+            std::remove_copy_if(input.begin(), input.end(),
+                                std::back_inserter(input_without_whitespace),
+                                detail::is_infra_ascii_whitespace);
+            output_size = detail::base64_decode(
+                ret.data(), input_without_whitespace.data(),
+                input_without_whitespace.size());
+        }
+
+        if (output_size == detail::MODP_B64_ERROR) {
+            return std::nullopt;
+        }
     }
 
     ret.resize(output_size);
@@ -645,43 +620,12 @@ inline std::optional<std::vector<unsigned char>> decode(
 }
 
 inline bool decode(std::string const& input, std::string& output) {
-    detail::ModpDecodePolicy policy{detail::ModpDecodePolicy::kStrict};
-    std::string temp;
-    temp.resize(detail::decode_len(input.size()));
-
-    // does not null terminate result since result is binary data!
-    size_t input_size = input.size();
-    size_t output_size =
-        modp_b64_decode(reinterpret_cast<unsigned char*>(temp.data()),
-                        input.data(), input_size, policy);
-
-    // Forgiving mode requires whitespace to be stripped prior to decoding.
-    // We don't do that in the above code to ensure that the "happy path" of
-    // input without whitespace is as fast as possible. Since whitespace in
-    // input will always cause `modp_b64_decode` to fail, just handle whitespace
-    // stripping on failure. This is not much slower than just scanning for
-    // whitespace first, even for input with whitespace.
-    if (output_size == detail::MODP_B64_ERROR &&
-        policy == detail::ModpDecodePolicy::kForgiving) {
-        // We could use `output` here to avoid an allocation when decoding is
-        // done in-place, but it violates the API contract that `output` is only
-        // modified on success.
-        std::string input_without_whitespace;
-        std::remove_copy_if(begin(input), end(input),
-                            std::back_inserter(input_without_whitespace),
-                            detail::is_infra_ascii_whitespace);
-        output_size =
-            modp_b64_decode(reinterpret_cast<unsigned char*>(temp.data()),
-                            input_without_whitespace.data(),
-                            input_without_whitespace.size(), policy);
-    }
-
-    if (output_size == detail::MODP_B64_ERROR) {
+    auto ret = decode(input);
+    if (!ret.has_value()) {
         return false;
     }
-
-    temp.resize(output_size);
-    output.swap(temp);
+    auto& v = ret.value();
+    output.assign(v.begin(), v.end());
     return true;
 }
 
