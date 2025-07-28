@@ -1,7 +1,9 @@
 #ifndef __BASE64_BASE64_HPP__
 #define __BASE64_BASE64_HPP__
+#include <algorithm>
 #include <cassert>  // assert()
 #include <cstdint>  // SIZE_MAX
+#include <iterator>
 #include <optional>
 #include <string>
 #include <string_view>
